@@ -68,13 +68,7 @@
     <h3>REST API examples</h3>
     <ol>
       <li>Set the "id 1" value to 100
-        <ul><li>curl "http://hiroakis.com:8888/api?id=1&amp;value=100"</li></ul>
-      </li>
-      <li>Set the "id 1" value to 300 ( The row No 1 will change to yellow )
-        <ul><li>curl "http://hiroakis.com:8888/api?id=1&amp;value=300"</li></ul>
-      </li>
-      <li>Set The "id 1" value to 600 ( The row No 1 will change to red )
-        <ul><li>curl "http://hiroakis.com:8888/api?id=1&amp;value=600"</li></ul>
+        <ul><li id="help">curl "http://hiroakis.com:8888/api?id=1&amp;value=100"</li></ul>
       </li>
     </ol>
     <ul>
@@ -84,44 +78,46 @@
     <img src="./rest_api_example.png"/>
   </div>
   <script>
-    var host = window.location.host;
-    var ws = new WebSocket('ws://'+host+'/ws');
-    var $message = $('#message');
+	  var host = window.location.host;
+	  $('#help').text("curl \"http://" + host + "/api?id=1&amp;value=100\"")
 
-    ws.onopen = function(){
-      $message.attr("class", 'label label-success');
-      $message.text('open');
-    };
-    ws.onmessage = function(ev){
-      $message.attr("class", 'label label-info');
-      $message.hide();
-      $message.fadeIn("slow");
-      $message.text('recieved message');
-
-      var json = JSON.parse(ev.data);
-      $('#' + json.id).hide();
-      $('#' + json.id).fadeIn("slow");
-      $('#' + json.id).text(json.value);
-
-      var $rowid = $('#row' + json.id);
-      if(json.value > 500){
-        $rowid.attr("class", "error");
-      }
-      else if(json.value > 200){
-        $rowid.attr("class", "warning");
-      }
-      else{
-        $rowid.attr("class", "");
-      }
-    };
-    ws.onclose = function(ev){
-      $message.attr("class", 'label label-important');
-      $message.text('closed');
-    };
-    ws.onerror = function(ev){
-      $message.attr("class", 'label label-warning');
-      $message.text('error occurred');
-    };
+	  var ws = new WebSocket( (window.location.protocol === 'https' ? 'wss://': 'ws://') + host + '/ws');
+	  var $message = $('#message');
+	
+	  ws.onopen = function(){
+		  $message.attr("class", 'label label-success');
+		  $message.text('open');
+	  };
+	  ws.onmessage = function(ev){
+		  $message.attr("class", 'label label-info');
+		  $message.hide();
+		  $message.fadeIn("slow");
+		  $message.text('recieved message');
+		
+		  var json = JSON.parse(ev.data);
+		  $('#' + json.id).hide();
+		  $('#' + json.id).fadeIn("slow");
+		  $('#' + json.id).text(json.value);
+		
+		  var $rowid = $('#row' + json.id);
+		  if(json.value > 500){
+			  $rowid.attr("class", "error");
+		  }
+		  else if(json.value > 200){
+			  $rowid.attr("class", "warning");
+		  }
+		  else{
+			  $rowid.attr("class", "");
+		  }
+	  };
+	  ws.onclose = function(ev){
+		  $message.attr("class", 'label label-important');
+		  $message.text('closed');
+	  };
+	  ws.onerror = function(ev){
+		  $message.attr("class", 'label label-warning');
+		  $message.text('error occurred');
+	  };
 
   </script>
 </body>
